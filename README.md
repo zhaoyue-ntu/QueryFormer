@@ -2,7 +2,7 @@
 
 Query representation learning plays a crucial role in various AI-based database tasks, such as query optimization and database tuning. QueryFormer is a method that uses attention to learn query representation. 
 
-Zhao, Yue, Gao Cong, Jiachen Shi, and Chunyan Miao. "Queryformer: A tree transformer model for query plan representation." Proceedings of the VLDB Endowment 15, no. 8 (2022): 1658-1670.
+_Zhao, Yue, Gao Cong, Jiachen Shi, and Chunyan Miao. "Queryformer: A Tree Transformer Model for Query Plan Representation." Proceedings of the VLDB Endowment 15, no. 8 (2022): 1658-1670._
 
 QueryFormer learns query representations that can be utilized for different prediction tasks. The QueryFormer code, designed for PyTorch, was released over 2 years ago. The python ecosystem has progressed since then. I updated the QueryFormer code to work with the latest Python version (3.12.2), PyTorch, and other required packages. I’ve finally managed to run the QueryFormer code on the latest Python runtime after investing several days of effort. In this README, I have detailed the steps for setting up the Python environment and making the code working.  
 
