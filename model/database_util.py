@@ -72,7 +72,7 @@ def get_hist_file(hist_path, bin_number = 50):
     hist_file = pd.read_csv(hist_path)
     for i in range(len(hist_file)):
         freq = hist_file['freq'][i]
-        freq_np = np.frombuffer(bytes.fromhex(freq), dtype=np.float)
+        freq_np = np.frombuffer(bytes.fromhex(freq), dtype=float)
         hist_file['freq'][i] = freq_np
 
     table_column = []
