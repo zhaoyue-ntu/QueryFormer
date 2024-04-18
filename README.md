@@ -6,7 +6,7 @@ _Zhao, Yue, Gao Cong, Jiachen Shi, and Chunyan Miao. "Queryformer: A Tree Transf
 
 QueryFormer learns query representations that can be utilized for different prediction tasks. The QueryFormer code, designed for PyTorch, was released over 2 years ago. The python ecosystem has progressed since then. I updated the QueryFormer code to work with the latest Python version (3.12.2), PyTorch, and other required packages. I’ve finally managed to run the QueryFormer code on the latest Python runtime after investing several days of effort. In this README, I have detailed the steps for setting up the Python environment and making the code working.  
 
-The training pipeline is in the Training V1.ipynb file. 
+The training pipeline is in the Training V1.ipynb file. To make the pipeline run faster, I have changed the original batch size from 1024 to 128. Also, in the training dataset, instead of loading all 18 files, I loaded 2 files. You'll find them in the Training V1.ipynb file. 
 
 ## Setting up a Python 3.12.2 Virtual Environment
 1. check available python versions installed via pyenv
