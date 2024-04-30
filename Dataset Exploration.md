@@ -220,4 +220,10 @@ This instance variable, idx2col, has the inverse mapping between label coding an
 name and get back its index (label encoding). Using idx2col dictionary, you can pass a label encoding and get back the column name. 
 __I am not sure yet where it's needed, though.__
 
+5. printing `type2idx`
+This dictionary has the label encoding for each unique database operator in the query execution plans. Here are a few sample key-value pairs from this dictionary:
+
+'Hash Join': 1
+'Index Scan': 7
+
 
