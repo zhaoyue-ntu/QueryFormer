@@ -106,7 +106,7 @@ class PlanTreeDataset(Dataset):
         heights = self.calculate_height(adj_list, len(features))
 
         return {
-            'features' : torch.FloatTensor(features),
+            'features' : torch.FloatTensor(np.array(features)),
             'heights' : torch.LongTensor(heights),
             'adjacency_list' : torch.LongTensor(np.array(adj_list)),
           

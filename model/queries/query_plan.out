@@ -1,0 +1,2908 @@
+Connecting to the Database.
+DB2 Universal Database Version 11.5, 5622-044 (c) Copyright IBM Corp. 1991, 2017
+Licensed Material - Program Property of IBM
+IBM DATABASE 2 Explain Table Format Tool
+
+
+
+******************** EXPLAIN INSTANCE ********************
+
+DB2_VERSION:       11.05.4
+FORMATTED ON DB:   TESTDB
+SOURCE_NAME:       SQLC2P30
+SOURCE_SCHEMA:     NULLID  
+SOURCE_VERSION:      
+EXPLAIN_TIME:      2021-07-29-14.32.36.021442
+EXPLAIN_REQUESTER: AHNAF   
+
+Database Context:
+----------------
+	Parallelism:          Intra-Partition Parallelism
+	CPU Speed:            1.102137e-07
+	Comm Speed:           100
+	Buffer Pool size:     626517
+	Sort Heap size:       156166
+	Database Heap size:   7671
+	Lock List size:       987240
+	Maximum Lock List:    98
+	Average Applications: 1
+	Locks Available:      30959846
+
+Package Context:
+---------------
+	SQL Type:           Dynamic
+	Optimization Level: 5
+	Blocking:           Block All Cursors
+	Isolation Level:    Cursor Stability
+
+
+
+---------------- STATEMENT 1  SECTION 201 ----------------
+	QUERYNO:       3
+	QUERYTAG:      CLP                 
+	Statement Type:   Select
+	Updatable:        No
+	Deletable:        No
+	Query Degree:     -1
+
+Original Statement:
+------------------
+SELECT 
+  mi_idx.info AS rating,
+  t.title AS movie_title 
+FROM 
+  info_type AS it,
+  keyword AS k,
+  movie_info_idx AS mi_idx,
+  movie_keyword AS mk,
+  title AS t 
+WHERE 
+  it.info ='rating' AND 
+  k.keyword LIKE 'street-artist' AND 
+  mi_idx.info > '5.0' AND 
+  t.production_year > 2005 AND 
+  t.id = mi_idx.movie_id AND 
+  t.id = mk.movie_id AND 
+  mk.movie_id = mi_idx.movie_id AND 
+  k.id = mk.keyword_id AND 
+  it.id = mi_idx.info_type_id
+
+
+Optimized Statement:
+-------------------
+SELECT 
+  Q3.INFO AS "RATING",
+  Q1.TITLE AS "MOVIE_TITLE" 
+FROM 
+  AHNAF.TITLE AS Q1,
+  AHNAF.MOVIE_KEYWORD AS Q2,
+  AHNAF.MOVIE_INFO_IDX AS Q3,
+  AHNAF.KEYWORD AS Q4,
+  AHNAF.INFO_TYPE AS Q5 
+WHERE 
+  (Q4.KEYWORD LIKE 'street-artist') AND 
+  (Q5.ID = Q3.INFO_TYPE_ID) AND 
+  (Q4.ID = Q2.KEYWORD_ID) AND 
+  (Q2.MOVIE_ID = Q3.MOVIE_ID) AND 
+  (Q1.ID = Q3.MOVIE_ID) AND 
+  (2005 < Q1.PRODUCTION_YEAR) AND 
+  ('5.0' < Q3.INFO) AND 
+  (Q5.INFO = 'rating')
+
+Access Plan:
+-----------
+	Total Cost: 		9014.73
+	Query Degree:		16
+
+
+                                     Rows 
+                                    RETURN
+                                    (   1)
+                                     Cost 
+                                      I/O 
+                                      |
+                                   0.279146 
+                                    CTQ   
+                                    (   2)
+                                    9014.73 
+                                     4171 
+                                      |
+                                   0.279146 
+                                    ^HSJOIN
+                                    (   3)
+                                    9014.73 
+                                     4171 
+                         /------------+------------\
+                     31.5435                          1 
+                     HSJOIN                        TBSCAN
+                     (   4)                        (  11)
+                      8902                         112.731 
+                      4155                           16 
+           /-----------+------------\                |
+       506474                       29.695           113 
+       TBSCAN                       HSJOIN   CO-TABLE: AHNAF   
+       (   5)                       (   6)        INFO_TYPE
+       633.68                       8266.62          Q5
+         282                         3873 
+         |                 /----------+----------\
+     1.38004e+06     1.11881e+06                 67.1057 
+ CO-TABLE: AHNAF       TBSCAN                    ^HSJOIN
+   MOVIE_INFO_IDX      (   7)                    (   8)
+         Q3            4731.69                   3530.91 
+                        2303                      1570 
+                         |                 /-------+-------\
+                     2.52831e+06     9.04786e+06          0.995105 
+                 CO-TABLE: AHNAF       TBSCAN              TBSCAN
+                        TITLE          (   9)              (  10)
+                         Q1            3385.26             115.339 
+                                        1519                 51 
+                                         |                   |
+                                     9.04786e+06           134170 
+                                 CO-TABLE: AHNAF     CO-TABLE: AHNAF   
+                                    MOVIE_KEYWORD          KEYWORD
+                                         Q2                  Q4
+
+
+Operator Symbols :
+------------------
+
+   Symbol      Description
+   ---------   ------------------------------------------
+   >JOIN     : Left outer join
+    JOIN<    : Right outer join
+   >JOIN<    : Full outer join
+   xJOIN     : Left antijoin
+    JOINx    : Right antijoin
+   ^JOIN     : Left early out
+    JOIN^    : Right early out
+    ATQ      : Asynchrony
+    BTQ      : Broadcast
+    CTQ      : Column-organized data
+    DTQ      : Directed
+    LTQ      : Intra-partition parallelism
+    MTQ      : Merging (sorted)
+    STQ      : Scatter
+   RCTQ      : Column-organized data with row as the source
+    XTQ      : XML aggregation
+     TQ*     : Listener
+
+
+Extended Diagnostic Information:
+--------------------------------
+
+No extended Diagnostic Information for this statement.
+
+
+Plan Details:
+-------------
+
+
+	1) RETURN: (Return Result)
+		Cumulative Total Cost: 		9014.73
+		Cumulative CPU Cost: 		5.24809e+09
+		Cumulative I/O Cost: 		4171
+		Cumulative Re-Total Cost: 	9014.73
+		Cumulative Re-CPU Cost: 	5.24809e+09
+		Cumulative Re-I/O Cost: 	4171
+		Cumulative First Row Cost: 	9014.73
+		Estimated Bufferpool Buffers: 	282
+
+		Arguments:
+		---------
+		BLDLEVEL: (Build level)
+			DB2 v11.5.4.0 : s2006161200
+		CPUCACHE: (Per-thread CPU cache size)
+			4194304
+		ENVVAR  : (Environment Variable)
+			DB2_ANTIJOIN=EXTEND
+		HEAPUSE : (Maximum Statement Heap Usage)
+			176 Pages
+		PLANID  : (Access plan identifier)
+			643ecfe45e963364
+		PREPTIME: (Statement prepare time)
+			        30 milliseconds
+		SEMEVID : (Semantic environment identifier)
+			a208a70bd50cf39d
+		STMTHEAP: (Statement heap size)
+			16384
+		STMTID  : (Normalized statement identifier)
+			66cd3a5a958f9164
+
+		Input Streams:
+		-------------
+			15) From Operator #2
+
+				Estimated number of rows: 	0.279146
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q6.MOVIE_TITLE+Q6.RATING
+
+
+	2) TQ    : (Table Queue)
+		Cumulative Total Cost: 		9014.73
+		Cumulative CPU Cost: 		5.24809e+09
+		Cumulative I/O Cost: 		4171
+		Cumulative Re-Total Cost: 	9014.73
+		Cumulative Re-CPU Cost: 	5.24809e+09
+		Cumulative Re-I/O Cost: 	4171
+		Cumulative First Row Cost: 	9014.73
+		Estimated Bufferpool Buffers: 	282
+
+		Arguments:
+		---------
+		LISTENER: (Listener Table Queue type)
+			FALSE
+		TQDEGREE: (Degree of Intra-Partition parallelism)
+			16
+		TQMERGE : (Merging Table Queue flag)
+			FALSE
+		TQORIGIN: (Table Queue Origin type)
+			COLUMN-ORGANIZED DATA
+		TQREAD  : (Table Queue Read type)
+			READ AHEAD
+		UNIQUE  : (Uniqueness required flag)
+			FALSE
+
+		Input Streams:
+		-------------
+			14) From Operator #3
+
+				Estimated number of rows: 	0.279146
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q6.MOVIE_TITLE+Q6.RATING
+
+
+		Output Streams:
+		--------------
+			15) To Operator #1
+
+				Estimated number of rows: 	0.279146
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q6.MOVIE_TITLE+Q6.RATING
+
+
+	3) HSJOIN: (Hash Join)
+		Cumulative Total Cost: 		9014.73
+		Cumulative CPU Cost: 		5.24808e+09
+		Cumulative I/O Cost: 		4171
+		Cumulative Re-Total Cost: 	9014.73
+		Cumulative Re-CPU Cost: 	5.24808e+09
+		Cumulative Re-I/O Cost: 	4171
+		Cumulative First Row Cost: 	9014.73
+		Estimated Bufferpool Buffers: 	282
+
+		Arguments:
+		---------
+		EARLYOUT: (Early Out flag)
+			LEFT
+		SEMIJOIN: (Semi-join flag)
+			FALSE
+
+		Predicates:
+		----------
+		6) Predicate used in Join, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			0.00884956
+
+			Predicate Text:
+			--------------
+			(Q5.ID = Q3.INFO_TYPE_ID)
+
+
+
+		Input Streams:
+		-------------
+			11) From Operator #4
+
+				Estimated number of rows: 	31.5435
+				Number of columns: 		5
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q1.TITLE+Q1.ID+Q3.INFO_TYPE_ID+Q3.MOVIE_ID
+				+Q3.INFO
+
+			13) From Operator #11
+
+				Estimated number of rows: 	1
+				Number of columns: 		1
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q5.ID
+
+
+		Output Streams:
+		--------------
+			14) To Operator #2
+
+				Estimated number of rows: 	0.279146
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q6.MOVIE_TITLE+Q6.RATING
+
+
+	4) HSJOIN: (Hash Join)
+		Cumulative Total Cost: 		8902
+		Cumulative CPU Cost: 		5.24798e+09
+		Cumulative I/O Cost: 		4155
+		Cumulative Re-Total Cost: 	8902
+		Cumulative Re-CPU Cost: 	5.24798e+09
+		Cumulative Re-I/O Cost: 	4155
+		Cumulative First Row Cost: 	8902
+		Estimated Bufferpool Buffers: 	282
+
+		Arguments:
+		---------
+		EARLYOUT: (Early Out flag)
+			NONE
+		JN INPUT: (Join input leg)
+			OUTER
+		SEMIJOIN: (Semi-join flag)
+			FALSE
+
+		Predicates:
+		----------
+		9) Predicate used in Join, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			3.95521e-07
+
+			Predicate Text:
+			--------------
+			(Q1.ID = Q3.MOVIE_ID)
+
+
+
+		Input Streams:
+		-------------
+			2) From Operator #5
+
+				Estimated number of rows: 	506474
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q3.INFO_TYPE_ID+Q3.MOVIE_ID+Q3.INFO
+
+			10) From Operator #6
+
+				Estimated number of rows: 	29.695
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q1.TITLE+Q1.ID+Q2.MOVIE_ID
+
+
+		Output Streams:
+		--------------
+			11) To Operator #3
+
+				Estimated number of rows: 	31.5435
+				Number of columns: 		5
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q1.TITLE+Q1.ID+Q3.INFO_TYPE_ID+Q3.MOVIE_ID
+				+Q3.INFO
+
+
+	5) TBSCAN: (Table Scan)
+		Cumulative Total Cost: 		633.68
+		Cumulative CPU Cost: 		5.9852e+08
+		Cumulative I/O Cost: 		282
+		Cumulative Re-Total Cost: 	65.9196
+		Cumulative Re-CPU Cost: 	5.98108e+08
+		Cumulative Re-I/O Cost: 	0
+		Cumulative First Row Cost: 	7.05626
+		Estimated Bufferpool Buffers: 	282
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		JN INPUT: (Join input leg)
+			OUTER
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		PREFETCH: (Type of Prefetch)
+			DYNAMIC LIST        
+		ROWLOCK : (Row Lock intent)
+			SHARE (CS/RS)
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		TABLOCK : (Table Lock intent)
+			INTENT SHARE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+
+		Predicates:
+		----------
+		11) Sargable Predicate, 
+			Comparison Operator: 		Less Than (<)
+			Subquery Input Required: 	No
+			Filter Factor: 			0.367001
+
+			Predicate Text:
+			--------------
+			('5.0' < Q3.INFO)
+
+
+
+		Input Streams:
+		-------------
+			1) From Object AHNAF.MOVIE_INFO_IDX
+
+				Estimated number of rows: 	1.38004e+06
+				Number of columns: 		4
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q3.$RID$+Q3.INFO_TYPE_ID+Q3.MOVIE_ID+Q3.INFO
+
+
+		Output Streams:
+		--------------
+			2) To Operator #4
+
+				Estimated number of rows: 	506474
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q3.INFO_TYPE_ID+Q3.MOVIE_ID+Q3.INFO
+
+
+	6) HSJOIN: (Hash Join)
+		Cumulative Total Cost: 		8266.62
+		Cumulative CPU Cost: 		4.63406e+09
+		Cumulative I/O Cost: 		3873
+		Cumulative Re-Total Cost: 	8266.62
+		Cumulative Re-CPU Cost: 	4.63406e+09
+		Cumulative Re-I/O Cost: 	3873
+		Cumulative First Row Cost: 	8266.62
+		Estimated Bufferpool Buffers: 	2303
+
+		Arguments:
+		---------
+		EARLYOUT: (Early Out flag)
+			NONE
+		JN INPUT: (Join input leg)
+			INNER
+		SEMIJOIN: (Semi-join flag)
+			FALSE
+
+		Predicates:
+		----------
+		3) Predicate used in Join, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			3.95521e-07
+
+			Predicate Text:
+			--------------
+			(Q1.ID = Q2.MOVIE_ID)
+
+
+
+		Input Streams:
+		-------------
+			4) From Operator #7
+
+				Estimated number of rows: 	1.11881e+06
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q1.TITLE+Q1.ID
+
+			9) From Operator #8
+
+				Estimated number of rows: 	67.1057
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q2.KEYWORD_ID+Q2.MOVIE_ID+Q4.ID
+
+
+		Output Streams:
+		--------------
+			10) To Operator #4
+
+				Estimated number of rows: 	29.695
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q1.TITLE+Q1.ID+Q2.MOVIE_ID
+
+
+	7) TBSCAN: (Table Scan)
+		Cumulative Total Cost: 		4731.69
+		Cumulative CPU Cost: 		1.09907e+09
+		Cumulative I/O Cost: 		2303
+		Cumulative Re-Total Cost: 	120.769
+		Cumulative Re-CPU Cost: 	1.09577e+09
+		Cumulative Re-I/O Cost: 	0
+		Cumulative First Row Cost: 	7.20179
+		Estimated Bufferpool Buffers: 	2303
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		JN INPUT: (Join input leg)
+			OUTER
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		PREFETCH: (Type of Prefetch)
+			DYNAMIC LIST        
+		ROWLOCK : (Row Lock intent)
+			SHARE (CS/RS)
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		TABLOCK : (Table Lock intent)
+			INTENT SHARE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+
+		Predicates:
+		----------
+		10) Sargable Predicate, 
+			Comparison Operator: 		Less Than (<)
+			Subquery Input Required: 	No
+			Filter Factor: 			0.442511
+
+			Predicate Text:
+			--------------
+			(2005 < Q1.PRODUCTION_YEAR)
+
+
+
+		Input Streams:
+		-------------
+			3) From Object AHNAF.TITLE
+
+				Estimated number of rows: 	2.52831e+06
+				Number of columns: 		4
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q1.$RID$+Q1.TITLE+Q1.ID+Q1.PRODUCTION_YEAR
+
+
+		Output Streams:
+		--------------
+			4) To Operator #6
+
+				Estimated number of rows: 	1.11881e+06
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q1.TITLE+Q1.ID
+
+
+	8) HSJOIN: (Hash Join)
+		Cumulative Total Cost: 		3530.91
+		Cumulative CPU Cost: 		3.49851e+09
+		Cumulative I/O Cost: 		1570
+		Cumulative Re-Total Cost: 	3530.91
+		Cumulative Re-CPU Cost: 	3.49851e+09
+		Cumulative Re-I/O Cost: 	1570
+		Cumulative First Row Cost: 	3530.91
+		Estimated Bufferpool Buffers: 	1519
+
+		Arguments:
+		---------
+		EARLYOUT: (Early Out flag)
+			LEFT
+		JN INPUT: (Join input leg)
+			INNER
+		SEMIJOIN: (Semi-join flag)
+			FALSE
+
+		Predicates:
+		----------
+		7) Predicate used in Join, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			7.45323e-06
+
+			Predicate Text:
+			--------------
+			(Q4.ID = Q2.KEYWORD_ID)
+
+
+
+		Input Streams:
+		-------------
+			6) From Operator #9
+
+				Estimated number of rows: 	9.04786e+06
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q2.KEYWORD_ID+Q2.MOVIE_ID
+
+			8) From Operator #10
+
+				Estimated number of rows: 	0.995105
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q4.ID+Q4.KEYWORD
+
+
+		Output Streams:
+		--------------
+			9) To Operator #6
+
+				Estimated number of rows: 	67.1057
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q2.KEYWORD_ID+Q2.MOVIE_ID+Q4.ID
+
+
+	9) TBSCAN: (Table Scan)
+		Cumulative Total Cost: 		3385.26
+		Cumulative CPU Cost: 		3.11826e+09
+		Cumulative I/O Cost: 		1519
+		Cumulative Re-Total Cost: 	343.435
+		Cumulative Re-CPU Cost: 	3.11608e+09
+		Cumulative Re-I/O Cost: 	0
+		Cumulative First Row Cost: 	7.0584
+		Estimated Bufferpool Buffers: 	1519
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		JN INPUT: (Join input leg)
+			OUTER
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		PREFETCH: (Type of Prefetch)
+			DYNAMIC LIST        
+		ROWLOCK : (Row Lock intent)
+			SHARE (CS/RS)
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		TABLOCK : (Table Lock intent)
+			INTENT SHARE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+
+		Input Streams:
+		-------------
+			5) From Object AHNAF.MOVIE_KEYWORD
+
+				Estimated number of rows: 	9.04786e+06
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q2.$RID$+Q2.KEYWORD_ID+Q2.MOVIE_ID
+
+
+		Output Streams:
+		--------------
+			6) To Operator #8
+
+				Estimated number of rows: 	9.04786e+06
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q2.KEYWORD_ID+Q2.MOVIE_ID
+
+
+	10) TBSCAN: (Table Scan)
+		Cumulative Total Cost: 		115.339
+		Cumulative CPU Cost: 		1.05192e+08
+		Cumulative I/O Cost: 		51
+		Cumulative Re-Total Cost: 	11.5845
+		Cumulative Re-CPU Cost: 	1.0511e+08
+		Cumulative Re-I/O Cost: 	0
+		Cumulative First Row Cost: 	115.338
+		Estimated Bufferpool Buffers: 	51
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		JN INPUT: (Join input leg)
+			INNER
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		PREFETCH: (Type of Prefetch)
+			DYNAMIC LIST        
+		ROWLOCK : (Row Lock intent)
+			SHARE (CS/RS)
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		TABLOCK : (Table Lock intent)
+			INTENT SHARE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+
+		Predicates:
+		----------
+		4) Sargable Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			7.41675e-06
+
+			Predicate Text:
+			--------------
+			(Q4.KEYWORD = 'street-artist')
+
+
+		13) Sargable Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			1
+
+			Predicate Text:
+			--------------
+			(LENGTH(Q4.KEYWORD) = LENGTH('street-artist'))
+
+
+
+		Input Streams:
+		-------------
+			7) From Object AHNAF.KEYWORD
+
+				Estimated number of rows: 	134170
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q4.$RID$+Q4.ID+Q4.KEYWORD
+
+
+		Output Streams:
+		--------------
+			8) To Operator #8
+
+				Estimated number of rows: 	0.995105
+				Number of columns: 		2
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q4.ID+Q4.KEYWORD
+
+
+	11) TBSCAN: (Table Scan)
+		Cumulative Total Cost: 		112.731
+		Cumulative CPU Cost: 		98437.2
+		Cumulative I/O Cost: 		16
+		Cumulative Re-Total Cost: 	0.00543558
+		Cumulative Re-CPU Cost: 	49318.6
+		Cumulative Re-I/O Cost: 	0
+		Cumulative First Row Cost: 	111.998
+		Estimated Bufferpool Buffers: 	16
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		JN INPUT: (Join input leg)
+			INNER
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		PREFETCH: (Type of Prefetch)
+			NONE                
+		ROWLOCK : (Row Lock intent)
+			SHARE (CS/RS)
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		TABLOCK : (Table Lock intent)
+			INTENT SHARE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+
+		Predicates:
+		----------
+		12) Sargable Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			0.00884956
+
+			Predicate Text:
+			--------------
+			(Q5.INFO = 'rating')
+
+
+
+		Input Streams:
+		-------------
+			12) From Object AHNAF.INFO_TYPE
+
+				Estimated number of rows: 	113
+				Number of columns: 		3
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q5.$RID$+Q5.ID+Q5.INFO
+
+
+		Output Streams:
+		--------------
+			13) To Operator #3
+
+				Estimated number of rows: 	1
+				Number of columns: 		1
+				Subquery predicate ID: 		Not Applicable
+
+				Column Names:
+				------------
+				+Q5.ID
+
+
+Objects Used in Access Plan:
+---------------------------
+
+	Schema: SYSIBM  
+	Name: 	SYN210611110420630510_INFO_TYPE
+	Type: 	Table (reference only)
+
+	Schema: SYSIBM  
+	Name: 	SYN210611110420789212_MOVIE_KEYWORD
+	Type: 	Table (reference only)
+
+	Schema: SYSIBM  
+	Name: 	SYN210614210440632821_TITLE
+	Type: 	Table (reference only)
+
+	Schema: SYSIBM  
+	Name: 	SYN210617070721967092_MOVIE_INFO_IDX
+	Type: 	Table (reference only)
+
+	Schema: SYSIBM  
+	Name: 	SYN210617074141822659_KEYWORD
+	Type: 	Table (reference only)
+
+	Schema: AHNAF   
+	Name: 	INFO_TYPE
+	Type: 	Column-organized Table
+
+	Schema: AHNAF   
+	Name: 	KEYWORD
+	Type: 	Column-organized Table
+
+	Schema: AHNAF   
+	Name: 	MOVIE_INFO_IDX
+	Type: 	Column-organized Table
+
+	Schema: AHNAF   
+	Name: 	MOVIE_KEYWORD
+	Type: 	Column-organized Table
+
+	Schema: AHNAF   
+	Name: 	TITLE
+	Type: 	Column-organized Table
+
+
+Extended Statistics Information:
+--------------------------------
+
+Tablespace Context:
+-------------------
+		Name:                                         	USERSPACE1
+		Overhead:                                     	6.725000 
+		Transfer Rate:                                	0.320000 
+		Prefetch Size:                                	4 
+		Extent Size:                                  	4 
+		Type:                                         	Database managed
+		Partition Group Name:                         	NULLP
+		Buffer Pool Identifier:                       	0 
+
+	Column Information:
+	--------------------
+		Number:                                       	1 
+		Name:                                         	ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	113
+			Average column length:                        	4 
+			Number of most frequent values:               	-1 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	112
+			Second lowest data value:                     	2
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	100 
+			Average encoded column length:                	2.000000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1 		1		0
+			6 		6		0
+			12 		12		0
+			18 		18		0
+			24 		24		0
+			30 		30		0
+			36 		36		0
+			42 		42		0
+			48 		48		0
+			54 		54		0
+			59 		59		0
+			65 		65		0
+			71 		71		0
+			77 		77		0
+			83 		83		0
+			89 		89		0
+			95 		95		0
+			101 		101		0
+			107 		107		0
+			113 		113		0
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	INFO
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	VARCHAR
+			Maximum column length:                        	32 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	113
+			Average column length:                        	17 
+			Number of most frequent values:               	-1 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	weekend gross
+			Second lowest data value:                     	LD analog left
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	100 
+			Average encoded column length:                	0.875000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1 		LD additional information		0
+			6 		LD audio quality		0
+			12 		LD color rendition		0
+			18 		LD dynamic range		0
+			24 		LD length		0
+			30 		LD original title		0
+			36 		LD release country		0
+			42 		LD status of availablility		0
+			48 		LD video standard		0
+			54 		article		0
+			59 		book		0
+			65 		copyright holder		0
+			71 		filming dates		0
+			77 		keywords		0
+			83 		nick names		0
+			89 		plot		0
+			95 		rating		0
+			101 		sound mix		0
+			107 		top 250 rank		0
+			113 		where now		0
+
+	Column Information:
+	--------------------
+		Number:                                       	1 
+		Name:                                         	ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	134144
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	134169
+			Second lowest data value:                     	2
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	3.375000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			67 		66		
+			67 		85		
+			67 		168		
+			67 		244		
+			67 		267		
+			67 		270		
+			67 		315		
+			67 		379		
+			67 		428		
+			67 		616		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			67 		66		0
+			7044 		6546		0
+			14155 		13297		0
+			21199 		19912		0
+			28243 		27356		0
+			35287 		34793		0
+			42398 		41747		0
+			49442 		49595		0
+			56486 		56011		0
+			63530 		64458		0
+			70641 		71123		0
+			77684 		78886		0
+			84728 		86162		0
+			91772 		93104		0
+			98883 		100311		0
+			105927 		107174		0
+			112971 		113746		0
+			120015 		120386		0
+			127126 		127459		0
+			134170 		134098		0
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	KEYWORD
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	VARCHAR
+			Maximum column length:                        	149 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	134170
+			Average column length:                        	19 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	ötztal-man
+			Second lowest data value:                     	$175,000
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	48 
+			Column clustering:                            	1 
+			Average encoded column length:                	10.900738 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			67 		1500-watts		
+			67 		1500s		
+			67 		1919-riots		
+			67 		19th-century-house		
+			67 		20th-century-politics		
+			67 		24-hours-of-le-mans		
+			67 		29-year-old		
+			67 		3-of-spades		
+			67 		3d-filmmaking		
+			67 		3d-glasses		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			67 		1500-watts		0
+			7044 		audience-as-voyeur		0
+			14155 		boeing-737		0
+			21199 		chennai-india		0
+			28243 		death-by-sidearm		0
+			35287 		electric-vehicle		0
+			42398 		fido-the-dog		0
+			49442 		grenadier-guard		0
+			56486 		illegal-street-racing		0
+			63530 		korengal-valley-afghanistan		0
+			70641 		mental-depression		0
+			77684 		nipple-burning		0
+			84728 		pheasant		0
+			91772 		red-cross		0
+			98883 		reference-to-taco-bell		0
+			105927 		scottish-regiment		0
+			112971 		southern-highlands		0
+			120015 		television-actress		0
+			127126 		using-rock-as-a-hammer		0
+			134170 		zephyr-the-greek-god		0
+
+	Column Information:
+	--------------------
+		Number:                                       	3 
+		Name:                                         	KEYWORD_ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	134170
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	134169
+			Second lowest data value:                     	2
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	3.125000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			144992 		335		
+			116896 		16264		
+			83680 		117		
+			69420 		2488		
+			58880 		359		
+			41044 		382		
+			39056 		137		
+			28728 		1		
+			28240 		1382		
+			27506 		121		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			28728 		1		1
+			484812 		196		196
+			1003970 		359		359
+			1431694 		613		613
+			1907638 		889		889
+			2382794 		1420		1420
+			2857630 		1962		1962
+			3338470 		2554		2554
+			3810486 		3262		3262
+			4285972 		4005		4005
+			4763278 		5457		5457
+			5238390 		7095		7095
+			5714526 		8725		8725
+			6190770 		11665		11665
+			6667164 		15558		15558
+			7143060 		19936		19936
+			7619252 		26417		26417
+			8095498 		37488		37488
+			8571670 		62227		62227
+			9047860 		134170		134170
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	MOVIE_ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	476794
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	2525833
+			Second lowest data value:                     	11
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	99 
+			Column clustering:                            	4 
+			Average encoded column length:                	4.000000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			1080 		2238348		
+			1006 		1923515		
+			924 		2043348		
+			918 		1775569		
+			910 		2141209		
+			888 		1966812		
+			870 		1821256		
+			870 		2361920		
+			870 		2134996		
+			856 		1923855		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			2 		2		1
+			476214 		405441		38782
+			952438 		931999		78797
+			1428846 		1407775		115514
+			1904820 		1669305		149168
+			2381096 		1728834		173350
+			2857232 		1780519		195775
+			3333422 		1841905		218256
+			3809838 		1906223		241845
+			4285906 		1962558		263893
+			4762090 		2023611		285865
+			5238236 		2092950		309071
+			5714594 		2154272		332166
+			6190644 		2217541		355076
+			6666940 		2275227		376576
+			7143366 		2324699		397321
+			7619298 		2371719		417223
+			8095466 		2411791		433557
+			8571678 		2464136		453917
+			9047860 		2525971		476794
+
+	Indexes defined on the table:
+	-----------------------------
+	Name  :	MOVIE_ID_MOVIE_KEYWORD
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	1022
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	476794
+		Index Full Key Cardinality:                   	476794
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.29.14.496194
+		Last Statistics Update:                       	2021-06-20-09.16.44.715493
+		Index Sequential Pages:                       	1021
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	1021.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	9047860
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+	Name  :	KEYWORD_ID_MOVIE_KEYWORD
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	1061
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	134170
+		Index Full Key Cardinality:                   	134170
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.28.32.045714
+		Last Statistics Update:                       	2021-06-20-09.16.44.715493
+		Index Sequential Pages:                       	1061
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	1061.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	9047860
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	TITLE
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	VARCHAR
+			Maximum column length:                        	669 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	1581056
+			Average column length:                        	20 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	ö
+			Second lowest data value:                     	!Que ve el Bisbe!
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	36 
+			Column clustering:                            	1 
+			Average encoded column length:                	16.791048 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			15170 		(#1.4)		
+			11377 		(#1.1)		
+			11377 		(#1.2)		
+			10113 		(#1.8)		
+			7585 		(#1.5)		
+			7585 		(#1.9)		
+			6321 		(#1.6)		
+			6321 		(#1.12)		
+			5057 		(#1.10)		
+			3792 		(#1.21)		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1264 		'Pandorum' Review		0
+			145378 		(#1.4)		0
+			266737 		(#15.17)		0
+			399473 		(1973-10-01)		0
+			532210 		(2003-03-21)		0
+			664946 		(2010-06-15)		0
+			798947 		After Many Years		0
+			931683 		Books the Gig		0
+			1064420 		Daycareless		0
+			1197156 		Epilogue		0
+			1331156 		Happy Mudder's Day		0
+			1463893 		Isadora's Request		0
+			1596629 		Lesbian Slumber Party 2: Lesbians		0
+			1729366 		Muss ich schreiben?		0
+			1863366 		Panther		0
+			1996103 		Scenesfromspace		0
+			2128839 		Sylvanic		0
+			2261576 		The Little Theater		0
+			2395576 		Tsunami: The Recovery		0
+			2528312 		Éroticomotel		0
+
+	Column Information:
+	--------------------
+		Number:                                       	1 
+		Name:                                         	ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	2528312
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	2528311
+			Second lowest data value:                     	2
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	3.875000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			1264 		2167		
+			1264 		3236		
+			1264 		3821		
+			1264 		4312		
+			1264 		5700		
+			1264 		6670		
+			1264 		7152		
+			1264 		10433		
+			1264 		11770		
+			1264 		12037		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1264 		2167		0
+			132736 		111405		0
+			266737 		262487		0
+			399473 		388761		0
+			532210 		508873		0
+			664946 		638641		0
+			798947 		802840		0
+			931683 		937493		0
+			1064420 		1064732		0
+			1197156 		1209079		0
+			1331156 		1347929		0
+			1463893 		1469795		0
+			1596629 		1595654		0
+			1729366 		1739236		0
+			1863366 		1862160		0
+			1996103 		1988649		0
+			2128839 		2123230		0
+			2261576 		2250828		0
+			2395576 		2389609		0
+			2528312 		2525690		0
+
+	Column Information:
+	--------------------
+		Number:                                       	5 
+		Name:                                         	PRODUCTION_YEAR
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	133
+			Average column length:                        	5 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	2019
+			Second lowest data value:                     	1888
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	2.250000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			184216 		2012		
+			165795 		2011		
+			131408 		2008		
+			126495 		2010		
+			120355 		2007		
+			108074 		2006		
+			106845 		2009		
+			104389 		2005		
+			76143 		2004		
+			73687 		2013		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1228 		1896		0
+			135092 		1938		0
+			268956 		1962		0
+			401592 		1971		0
+			535456 		1981		0
+			669320 		1989		0
+			803183 		1994		0
+			937047 		1998		0
+			1070911 		2000		0
+			1203547 		2003		0
+			1337411 		2005		0
+			1471275 		2006		0
+			1605139 		2007		0
+			1739003 		2008		0
+			1872867 		2009		0
+			2005502 		2010		0
+			2139366 		2011		0
+			2195859 		2012		0
+			2380076 		2012		0
+			2456218 		2014		0
+
+	Name  :	KIND_ID_TITLE
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	177
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	6
+		Index Full Key Cardinality:                   	6
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.28.38.881409
+		Last Statistics Update:                       	2021-06-18-09.26.44.277607
+		Index Sequential Pages:                       	176
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	176.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	2528312
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+	Column Information:
+	--------------------
+		Number:                                       	3 
+		Name:                                         	INFO_TYPE_ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	5
+			Average column length:                        	4 
+			Number of most frequent values:               	5 
+			Number of quantiles:                          	10 
+			Second highest data value:                    	112
+			Second lowest data value:                     	100
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	2.125000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			459925 		99		
+			459925 		100		
+			459925 		101		
+			250 		112		
+			10 		113		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			0 		99		1
+			459925 		99		1
+			459925 		100		2
+			919850 		100		2
+			919850 		101		3
+			1379775 		101		3
+			1379775 		112		4
+			1380025 		112		4
+			1380025 		113		5
+			1380035 		113		5
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	MOVIE_ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	459925
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	2525792
+			Second lowest data value:                     	11
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	3.875000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			4 		1635656		
+			4 		1638450		
+			4 		1640166		
+			4 		1643533		
+			4 		1644339		
+			4 		1646065		
+			4 		1658032		
+			4 		1674610		
+			4 		1674814		
+			4 		1675189		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			3 		2		1
+			72633 		223251		24211
+			145269 		464538		48423
+			217902 		666596		72634
+			290535 		898941		96845
+			363168 		1131408		121056
+			435801 		1326097		145267
+			508434 		1523988		169478
+			581067 		1680014		193685
+			653702 		1757229		217890
+			726334 		1833163		242096
+			798969 		1911971		266302
+			871601 		1991237		290505
+			944234 		2066563		314711
+			1016868 		2143538		338916
+			1089502 		2221960		363121
+			1162135 		2297146		387322
+			1234770 		2372913		411524
+			1307402 		2449040		435718
+			1380035 		2525793		459925
+
+	Column Information:
+	--------------------
+		Number:                                       	4 
+		Name:                                         	INFO
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	VARCHAR
+			Maximum column length:                        	21 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	152576
+			Average column length:                        	9 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	9993
+			Second lowest data value:                     	.*........
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	93 
+			Column clustering:                            	1 
+			Average encoded column length:                	2.999622 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			26221 		7		
+			24841 		6		
+			21391 		5		
+			18630 		10		
+			16560 		8		
+			16560 		6.4		
+			15870 		6.8		
+			15180 		6.2		
+			14490 		7.1		
+			14490 		7.0		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			690 		*.........		0
+			72452 		...1142...		0
+			145594 		0....00122		0
+			218046 		00..1221.1		0
+			291187 		0000121100		0
+			362949 		1..001..04		0
+			436091 		1100100.04		0
+			516823 		17		0
+			583065 		20		0
+			656207 		28		0
+			726589 		35		0
+			805941 		4.9		0
+			873562 		5.1		0
+			950154 		5.9		0
+			1023986 		6.1		0
+			1092988 		6.6		0
+			1170960 		7		0
+			1237202 		7.4		0
+			1321384 		8		0
+			1380035 		99		0
+
+	Name  :	MOVIE_ID_MOVIE_INFO_IDX
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	464
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	459925
+		Index Full Key Cardinality:                   	459925
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.29.13.504314
+		Last Statistics Update:                       	2021-06-18-14.06.41.984648
+		Index Sequential Pages:                       	463
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	463.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	1380035
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+	Name  :	INFO_TYPE_ID_MOVIE_INFO_IDX
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	97
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	5
+		Index Full Key Cardinality:                   	5
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.28.19.618110
+		Last Statistics Update:                       	2021-06-18-14.06.41.984648
+		Index Sequential Pages:                       	97
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	97.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	1380035
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+Base Table Statistics:
+----------------------
+Name  : 	MOVIE_INFO_IDX
+Schema: 	AHNAF   
+		Number of Columns:                            	5 
+		Number of Pages with Rows:                    	365
+		Number of Meta Pages:                         	29
+		Number of Pages:                              	376
+		Number of Rows:                               	1380035
+		Table Overflow Record Count:                  	0
+		Width of Rows:                                	47 
+		Time of Creation:                             	2021-06-17-07.07.21.943549
+		Last Statistics Update:                       	2021-06-18-14.06.41.984648
+		Primary Tablespace:                           	USERSPACE1
+		Tablespace for Indexes:                       	USERSPACE1
+		Tablespace for Long Data:                     	NULLP
+		Number of Referenced Columns:                 	3 
+		Number of Indexes:                            	2 
+		Volatile Table:                               	No
+		Number of Active Blocks:                      	-1
+		Number of Column Groups:                      	0 
+		Number of Data Partitions:                    	1 
+		Average Row Compression Ratio:                	-1.000000 
+		Percent Rows Compressed:                      	-1.000000 
+		Average Compressed Row Size:                  	-1 
+		Statistics Type:                              	A
+		Number of Worker Nodes:                       	0 
+
+	Column Information:
+	--------------------
+		Number:                                       	3 
+		Name:                                         	INFO_TYPE_ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	5
+			Average column length:                        	4 
+			Number of most frequent values:               	5 
+			Number of quantiles:                          	10 
+			Second highest data value:                    	112
+			Second lowest data value:                     	100
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	2.125000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			459925 		99		
+			459925 		100		
+			459925 		101		
+			250 		112		
+			10 		113		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			0 		99		1
+			459925 		99		1
+			459925 		100		2
+			919850 		100		2
+			919850 		101		3
+			1379775 		101		3
+			1379775 		112		4
+			1380025 		112		4
+			1380025 		113		5
+			1380035 		113		5
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	MOVIE_ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	459925
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	2525792
+			Second lowest data value:                     	11
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	3.875000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			4 		1635656		
+			4 		1638450		
+			4 		1640166		
+			4 		1643533		
+			4 		1644339		
+			4 		1646065		
+			4 		1658032		
+			4 		1674610		
+			4 		1674814		
+			4 		1675189		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			3 		2		1
+			72633 		223251		24211
+			145269 		464538		48423
+			217902 		666596		72634
+			290535 		898941		96845
+			363168 		1131408		121056
+			435801 		1326097		145267
+			508434 		1523988		169478
+			581067 		1680014		193685
+			653702 		1757229		217890
+			726334 		1833163		242096
+			798969 		1911971		266302
+			871601 		1991237		290505
+			944234 		2066563		314711
+			1016868 		2143538		338916
+			1089502 		2221960		363121
+			1162135 		2297146		387322
+			1234770 		2372913		411524
+			1307402 		2449040		435718
+			1380035 		2525793		459925
+
+	Column Information:
+	--------------------
+		Number:                                       	4 
+		Name:                                         	INFO
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	VARCHAR
+			Maximum column length:                        	21 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	152576
+			Average column length:                        	9 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	9993
+			Second lowest data value:                     	.*........
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	93 
+			Column clustering:                            	1 
+			Average encoded column length:                	2.999622 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			26221 		7		
+			24841 		6		
+			21391 		5		
+			18630 		10		
+			16560 		8		
+			16560 		6.4		
+			15870 		6.8		
+			15180 		6.2		
+			14490 		7.1		
+			14490 		7.0		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			690 		*.........		0
+			72452 		...1142...		0
+			145594 		0....00122		0
+			218046 		00..1221.1		0
+			291187 		0000121100		0
+			362949 		1..001..04		0
+			436091 		1100100.04		0
+			516823 		17		0
+			583065 		20		0
+			656207 		28		0
+			726589 		35		0
+			805941 		4.9		0
+			873562 		5.1		0
+			950154 		5.9		0
+			1023986 		6.1		0
+			1092988 		6.6		0
+			1170960 		7		0
+			1237202 		7.4		0
+			1321384 		8		0
+			1380035 		99		0
+
+	Indexes defined on the table:
+	-----------------------------
+	Name  :	MOVIE_ID_MOVIE_INFO_IDX
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	464
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	459925
+		Index Full Key Cardinality:                   	459925
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.29.13.504314
+		Last Statistics Update:                       	2021-06-18-14.06.41.984648
+		Index Sequential Pages:                       	463
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	463.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	1380035
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+	Name  :	INFO_TYPE_ID_MOVIE_INFO_IDX
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	97
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	5
+		Index Full Key Cardinality:                   	5
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.28.19.618110
+		Last Statistics Update:                       	2021-06-18-14.06.41.984648
+		Index Sequential Pages:                       	97
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	97.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	1380035
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+Base Table Statistics:
+----------------------
+Name  : 	TITLE
+Schema: 	AHNAF   
+		Number of Columns:                            	12 
+		Number of Pages with Rows:                    	4708
+		Number of Meta Pages:                         	46
+		Number of Pages:                              	6968
+		Number of Rows:                               	2528312
+		Table Overflow Record Count:                  	0
+		Width of Rows:                                	59 
+		Time of Creation:                             	2021-06-14-21.04.40.552507
+		Last Statistics Update:                       	2021-06-18-09.26.44.277607
+		Primary Tablespace:                           	USERSPACE1
+		Tablespace for Indexes:                       	USERSPACE1
+		Tablespace for Long Data:                     	NULLP
+		Number of Referenced Columns:                 	3 
+		Number of Indexes:                            	1 
+		Volatile Table:                               	No
+		Number of Active Blocks:                      	-1
+		Number of Column Groups:                      	0 
+		Number of Data Partitions:                    	1 
+		Average Row Compression Ratio:                	-1.000000 
+		Percent Rows Compressed:                      	-1.000000 
+		Average Compressed Row Size:                  	-1 
+		Statistics Type:                              	A
+		Number of Worker Nodes:                       	0 
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	TITLE
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	VARCHAR
+			Maximum column length:                        	669 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	1581056
+			Average column length:                        	20 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	ö
+			Second lowest data value:                     	!Que ve el Bisbe!
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	36 
+			Column clustering:                            	1 
+			Average encoded column length:                	16.791048 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			15170 		(#1.4)		
+			11377 		(#1.1)		
+			11377 		(#1.2)		
+			10113 		(#1.8)		
+			7585 		(#1.5)		
+			7585 		(#1.9)		
+			6321 		(#1.6)		
+			6321 		(#1.12)		
+			5057 		(#1.10)		
+			3792 		(#1.21)		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1264 		'Pandorum' Review		0
+			145378 		(#1.4)		0
+			266737 		(#15.17)		0
+			399473 		(1973-10-01)		0
+			532210 		(2003-03-21)		0
+			664946 		(2010-06-15)		0
+			798947 		After Many Years		0
+			931683 		Books the Gig		0
+			1064420 		Daycareless		0
+			1197156 		Epilogue		0
+			1331156 		Happy Mudder's Day		0
+			1463893 		Isadora's Request		0
+			1596629 		Lesbian Slumber Party 2: Lesbians		0
+			1729366 		Muss ich schreiben?		0
+			1863366 		Panther		0
+			1996103 		Scenesfromspace		0
+			2128839 		Sylvanic		0
+			2261576 		The Little Theater		0
+			2395576 		Tsunami: The Recovery		0
+			2528312 		Éroticomotel		0
+
+	Column Information:
+	--------------------
+		Number:                                       	1 
+		Name:                                         	ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	2528312
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	2528311
+			Second lowest data value:                     	2
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	3.875000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			1264 		2167		
+			1264 		3236		
+			1264 		3821		
+			1264 		4312		
+			1264 		5700		
+			1264 		6670		
+			1264 		7152		
+			1264 		10433		
+			1264 		11770		
+			1264 		12037		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1264 		2167		0
+			132736 		111405		0
+			266737 		262487		0
+			399473 		388761		0
+			532210 		508873		0
+			664946 		638641		0
+			798947 		802840		0
+			931683 		937493		0
+			1064420 		1064732		0
+			1197156 		1209079		0
+			1331156 		1347929		0
+			1463893 		1469795		0
+			1596629 		1595654		0
+			1729366 		1739236		0
+			1863366 		1862160		0
+			1996103 		1988649		0
+			2128839 		2123230		0
+			2261576 		2250828		0
+			2395576 		2389609		0
+			2528312 		2525690		0
+
+	Column Information:
+	--------------------
+		Number:                                       	5 
+		Name:                                         	PRODUCTION_YEAR
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	133
+			Average column length:                        	5 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	2019
+			Second lowest data value:                     	1888
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	2.250000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			184216 		2012		
+			165795 		2011		
+			131408 		2008		
+			126495 		2010		
+			120355 		2007		
+			108074 		2006		
+			106845 		2009		
+			104389 		2005		
+			76143 		2004		
+			73687 		2013		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1228 		1896		0
+			135092 		1938		0
+			268956 		1962		0
+			401592 		1971		0
+			535456 		1981		0
+			669320 		1989		0
+			803183 		1994		0
+			937047 		1998		0
+			1070911 		2000		0
+			1203547 		2003		0
+			1337411 		2005		0
+			1471275 		2006		0
+			1605139 		2007		0
+			1739003 		2008		0
+			1872867 		2009		0
+			2005502 		2010		0
+			2139366 		2011		0
+			2195859 		2012		0
+			2380076 		2012		0
+			2456218 		2014		0
+
+	Indexes defined on the table:
+	-----------------------------
+	Name  :	KIND_ID_TITLE
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	177
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	6
+		Index Full Key Cardinality:                   	6
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.28.38.881409
+		Last Statistics Update:                       	2021-06-18-09.26.44.277607
+		Index Sequential Pages:                       	176
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	176.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	2528312
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+Base Table Statistics:
+----------------------
+Name  : 	MOVIE_KEYWORD
+Schema: 	AHNAF   
+		Number of Columns:                            	3 
+		Number of Pages with Rows:                    	1787
+		Number of Meta Pages:                         	10
+		Number of Pages:                              	1856
+		Number of Rows:                               	9047860
+		Table Overflow Record Count:                  	0
+		Width of Rows:                                	22 
+		Time of Creation:                             	2021-06-11-11.04.20.772477
+		Last Statistics Update:                       	2021-06-20-09.16.44.715493
+		Primary Tablespace:                           	USERSPACE1
+		Tablespace for Indexes:                       	USERSPACE1
+		Tablespace for Long Data:                     	NULLP
+		Number of Referenced Columns:                 	2 
+		Number of Indexes:                            	2 
+		Volatile Table:                               	No
+		Number of Active Blocks:                      	-1
+		Number of Column Groups:                      	0 
+		Number of Data Partitions:                    	1 
+		Average Row Compression Ratio:                	-1.000000 
+		Percent Rows Compressed:                      	-1.000000 
+		Average Compressed Row Size:                  	-1 
+		Statistics Type:                              	A
+		Number of Worker Nodes:                       	0 
+
+	Column Information:
+	--------------------
+		Number:                                       	3 
+		Name:                                         	KEYWORD_ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	134170
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	134169
+			Second lowest data value:                     	2
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	3.125000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			144992 		335		
+			116896 		16264		
+			83680 		117		
+			69420 		2488		
+			58880 		359		
+			41044 		382		
+			39056 		137		
+			28728 		1		
+			28240 		1382		
+			27506 		121		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			28728 		1		1
+			484812 		196		196
+			1003970 		359		359
+			1431694 		613		613
+			1907638 		889		889
+			2382794 		1420		1420
+			2857630 		1962		1962
+			3338470 		2554		2554
+			3810486 		3262		3262
+			4285972 		4005		4005
+			4763278 		5457		5457
+			5238390 		7095		7095
+			5714526 		8725		8725
+			6190770 		11665		11665
+			6667164 		15558		15558
+			7143060 		19936		19936
+			7619252 		26417		26417
+			8095498 		37488		37488
+			8571670 		62227		62227
+			9047860 		134170		134170
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	MOVIE_ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	476794
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	2525833
+			Second lowest data value:                     	11
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	99 
+			Column clustering:                            	4 
+			Average encoded column length:                	4.000000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			1080 		2238348		
+			1006 		1923515		
+			924 		2043348		
+			918 		1775569		
+			910 		2141209		
+			888 		1966812		
+			870 		1821256		
+			870 		2361920		
+			870 		2134996		
+			856 		1923855		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			2 		2		1
+			476214 		405441		38782
+			952438 		931999		78797
+			1428846 		1407775		115514
+			1904820 		1669305		149168
+			2381096 		1728834		173350
+			2857232 		1780519		195775
+			3333422 		1841905		218256
+			3809838 		1906223		241845
+			4285906 		1962558		263893
+			4762090 		2023611		285865
+			5238236 		2092950		309071
+			5714594 		2154272		332166
+			6190644 		2217541		355076
+			6666940 		2275227		376576
+			7143366 		2324699		397321
+			7619298 		2371719		417223
+			8095466 		2411791		433557
+			8571678 		2464136		453917
+			9047860 		2525971		476794
+
+	Indexes defined on the table:
+	-----------------------------
+	Name  :	MOVIE_ID_MOVIE_KEYWORD
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	1022
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	476794
+		Index Full Key Cardinality:                   	476794
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.29.14.496194
+		Last Statistics Update:                       	2021-06-20-09.16.44.715493
+		Index Sequential Pages:                       	1021
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	1021.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	9047860
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+	Name  :	KEYWORD_ID_MOVIE_KEYWORD
+	Schema:	AHNAF   
+		Unique Rule:                                  	Duplicate index
+		Used in Operator:                             	No
+		Page Fetch Pairs:                             	Not Available
+		Number of Columns:                            	1 
+		Index Leaf Pages:                             	1061
+		Index Tree Levels:                            	2 
+		Index First Key Cardinality:                  	134170
+		Index Full Key Cardinality:                   	134170
+		Index Cluster Ratio:                          	-1 
+		Index Cluster Factor:                         	-1.000000 
+		Time of Creation:                             	2021-06-18-08.28.32.045714
+		Last Statistics Update:                       	2021-06-20-09.16.44.715493
+		Index Sequential Pages:                       	1061
+		Index First 2 Keys Cardinality:               	-1
+		Index First 3 Keys Cardinality:               	-1
+		Index First 4 Keys Cardinality:               	-1
+		Index Avg Gap between Sequences:              	0.000000 
+		Fetch Avg Gap between Sequences:              	-1.000000 
+		Index Avg Sequential Pages:                   	1061.000000 
+		Fetch Avg Sequential Pages:                   	-1.000000 
+		Index Avg Random Pages:                       	0.000000 
+		Fetch Avg Random Pages:                       	-1.000000 
+		Index RID Count:                              	9047860
+		Index Deleted RID Count:                      	0
+		Index Empty Leaf Pages:                       	0
+		Avg Partition Cluster Ratio:                  	-1 
+		Avg Partition Cluster Factor:                 	-1.000000 
+		Data Partition Cluster Factor:                	1.000000 
+		Data Partition Page Fetch Pairs:              	Not Available
+
+Base Table Statistics:
+----------------------
+Name  : 	KEYWORD
+Schema: 	AHNAF   
+		Number of Columns:                            	3 
+		Number of Pages with Rows:                    	66
+		Number of Meta Pages:                         	46
+		Number of Pages:                              	66
+		Number of Rows:                               	134170
+		Table Overflow Record Count:                  	0
+		Width of Rows:                                	37 
+		Time of Creation:                             	2021-06-17-07.41.41.788062
+		Last Statistics Update:                       	2021-06-17-07.42.12.344682
+		Primary Tablespace:                           	USERSPACE1
+		Tablespace for Indexes:                       	USERSPACE1
+		Tablespace for Long Data:                     	NULLP
+		Number of Referenced Columns:                 	2 
+		Number of Indexes:                            	0 
+		Volatile Table:                               	No
+		Number of Active Blocks:                      	-1
+		Number of Column Groups:                      	0 
+		Number of Data Partitions:                    	1 
+		Average Row Compression Ratio:                	-1.000000 
+		Percent Rows Compressed:                      	-1.000000 
+		Average Compressed Row Size:                  	-1 
+		Statistics Type:                              	U
+		Number of Worker Nodes:                       	0 
+
+	Column Information:
+	--------------------
+		Number:                                       	1 
+		Name:                                         	ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	134144
+			Average column length:                        	4 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	134169
+			Second lowest data value:                     	2
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	1 
+			Average encoded column length:                	3.375000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			67 		66		
+			67 		85		
+			67 		168		
+			67 		244		
+			67 		267		
+			67 		270		
+			67 		315		
+			67 		379		
+			67 		428		
+			67 		616		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			67 		66		0
+			7044 		6546		0
+			14155 		13297		0
+			21199 		19912		0
+			28243 		27356		0
+			35287 		34793		0
+			42398 		41747		0
+			49442 		49595		0
+			56486 		56011		0
+			63530 		64458		0
+			70641 		71123		0
+			77684 		78886		0
+			84728 		86162		0
+			91772 		93104		0
+			98883 		100311		0
+			105927 		107174		0
+			112971 		113746		0
+			120015 		120386		0
+			127126 		127459		0
+			134170 		134098		0
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	KEYWORD
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	VARCHAR
+			Maximum column length:                        	149 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	134170
+			Average column length:                        	19 
+			Number of most frequent values:               	10 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	ötztal-man
+			Second lowest data value:                     	$175,000
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	48 
+			Column clustering:                            	1 
+			Average encoded column length:                	10.900738 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Frequency Statistics:
+			Valcount	Value 
+			--------------------------------
+			67 		1500-watts		
+			67 		1500s		
+			67 		1919-riots		
+			67 		19th-century-house		
+			67 		20th-century-politics		
+			67 		24-hours-of-le-mans		
+			67 		29-year-old		
+			67 		3-of-spades		
+			67 		3d-filmmaking		
+			67 		3d-glasses		
+
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			67 		1500-watts		0
+			7044 		audience-as-voyeur		0
+			14155 		boeing-737		0
+			21199 		chennai-india		0
+			28243 		death-by-sidearm		0
+			35287 		electric-vehicle		0
+			42398 		fido-the-dog		0
+			49442 		grenadier-guard		0
+			56486 		illegal-street-racing		0
+			63530 		korengal-valley-afghanistan		0
+			70641 		mental-depression		0
+			77684 		nipple-burning		0
+			84728 		pheasant		0
+			91772 		red-cross		0
+			98883 		reference-to-taco-bell		0
+			105927 		scottish-regiment		0
+			112971 		southern-highlands		0
+			120015 		television-actress		0
+			127126 		using-rock-as-a-hammer		0
+			134170 		zephyr-the-greek-god		0
+
+Base Table Statistics:
+----------------------
+Name  : 	INFO_TYPE
+Schema: 	AHNAF   
+		Number of Columns:                            	2 
+		Number of Pages with Rows:                    	3
+		Number of Meta Pages:                         	1
+		Number of Pages:                              	16
+		Number of Rows:                               	113
+		Table Overflow Record Count:                  	0
+		Width of Rows:                                	27 
+		Time of Creation:                             	2021-06-11-11.04.20.613576
+		Last Statistics Update:                       	2021-06-14-11.36.45.375497
+		Primary Tablespace:                           	USERSPACE1
+		Tablespace for Indexes:                       	USERSPACE1
+		Tablespace for Long Data:                     	NULLP
+		Number of Referenced Columns:                 	2 
+		Number of Indexes:                            	0 
+		Volatile Table:                               	No
+		Number of Active Blocks:                      	-1
+		Number of Column Groups:                      	0 
+		Number of Data Partitions:                    	1 
+		Average Row Compression Ratio:                	-1.000000 
+		Percent Rows Compressed:                      	-1.000000 
+		Average Compressed Row Size:                  	-1 
+		Statistics Type:                              	A
+		Number of Worker Nodes:                       	0 
+
+	Column Information:
+	--------------------
+		Number:                                       	1 
+		Name:                                         	ID
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	INTEGER
+			Maximum column length:                        	4 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	113
+			Average column length:                        	4 
+			Number of most frequent values:               	-1 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	112
+			Second lowest data value:                     	2
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	100 
+			Average encoded column length:                	2.000000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1 		1		0
+			6 		6		0
+			12 		12		0
+			18 		18		0
+			24 		24		0
+			30 		30		0
+			36 		36		0
+			42 		42		0
+			48 		48		0
+			54 		54		0
+			59 		59		0
+			65 		65		0
+			71 		71		0
+			77 		77		0
+			83 		83		0
+			89 		89		0
+			95 		95		0
+			101 		101		0
+			107 		107		0
+			113 		113		0
+
+	Column Information:
+	--------------------
+		Number:                                       	2 
+		Name:                                         	INFO
+		DFS Partition Column:                         	No
+		Statistics Available:                         	Yes
+
+		Column Statistics:
+		------------------
+			Schema name of the column type:               	SYSIBM  
+			Name of column type:                          	VARCHAR
+			Maximum column length:                        	32 
+			Scale for decimal or timestamp column:        	0 
+			Number of distinct column values:             	113
+			Average column length:                        	17 
+			Number of most frequent values:               	-1 
+			Number of quantiles:                          	20 
+			Second highest data value:                    	weekend gross
+			Second lowest data value:                     	LD analog left
+			Column sequence in partition key:             	0 
+			Average number of sub-elements:               	-1 
+			Average length of delimiters:                 	-1 
+			Percentage encoded column values:             	100 
+			Column clustering:                            	100 
+			Average encoded column length:                	0.875000 
+
+		Column Distribution Statistics:
+		-------------------------------
+			Quantile Statistics:
+			Valcount 	Value 		Distcount 
+			----------------------------------------------
+			1 		LD additional information		0
+			6 		LD audio quality		0
+			12 		LD color rendition		0
+			18 		LD dynamic range		0
+			24 		LD length		0
+			30 		LD original title		0
+			36 		LD release country		0
+			42 		LD status of availablility		0
+			48 		LD video standard		0
+			54 		article		0
+			59 		book		0
+			65 		copyright holder		0
+			71 		filming dates		0
+			77 		keywords		0
+			83 		nick names		0
+			89 		plot		0
+			95 		rating		0
+			101 		sound mix		0
+			107 		top 250 rank		0
+			113 		where now		0
+
+

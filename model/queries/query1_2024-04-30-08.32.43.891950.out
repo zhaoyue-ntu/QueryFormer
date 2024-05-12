@@ -1,0 +1,801 @@
+DB2 Universal Database Version 12.1, 5622-044 (c) Copyright IBM Corp. 1991, 2022
+Licensed Material - Program Property of IBM
+IBM Db2 Explain Table Format Tool
+
+
+
+******************** EXPLAIN INSTANCE ********************
+
+DB2_VERSION:       12.01.0
+FORMATTED ON DB:   TPCDS
+SOURCE_NAME:       SQLC2Q31
+SOURCE_SCHEMA:     NULLID  
+SOURCE_VERSION:      
+EXPLAIN_TIME:      2024-04-30-08.32.43.891950
+EXPLAIN_REQUESTER: SHAIKHQ 
+
+Database Context:
+----------------
+	Parallelism:          None
+	CPU Speed:            4.000000e-05
+	Comm Speed:           0
+	Buffer Pool size:     1034137
+	Sort Heap size:       12275
+	Database Heap size:   5092
+	Lock List size:       15360
+	Maximum Lock List:    98
+	Average Applications: 1
+	Locks Available:      481689
+
+Package Context:
+---------------
+	SQL Type:           Dynamic
+	Optimization Level: 5
+	Blocking:           Block All Cursors
+	Isolation Level:    Cursor Stability
+
+
+
+---------------- STATEMENT 1  SECTION 201 ----------------
+	QUERYNO:       0
+	QUERYTAG:      CLP                 
+	Statement Type:   Select
+	Updatable:        No
+	Deletable:        No
+	Query Degree:     1
+
+Original Statement:
+------------------
+SELECT 
+  TPCDS.STORE_SALES.SS_WHOLESALE_COST,
+  TPCDS.STORE_RETURNS.SR_NET_LOSS 
+FROM 
+  TPCDS.STORE_SALES 
+  INNER JOIN TPCDS.STORE_RETURNS 
+  ON TPCDS.STORE_RETURNS.SR_TICKET_NUMBER = TPCDS.STORE_SALES.SS_TICKET_NUMBER AND 
+  TPCDS.STORE_RETURNS.SR_ITEM_SK = TPCDS.STORE_SALES.SS_ITEM_SK 
+WHERE 
+  TPCDS.STORE_SALES.SS_STORE_SK = 2 AND 
+  TPCDS.STORE_RETURNS.SR_RETURNED_DATE_SK = 2451680
+
+
+Optimized Statement:
+-------------------
+SELECT 
+  Q1.SS_WHOLESALE_COST AS "SS_WHOLESALE_COST",
+  Q2.SR_NET_LOSS AS "SR_NET_LOSS" 
+FROM 
+  TPCDS.STORE_SALES AS Q1,
+  TPCDS.STORE_RETURNS AS Q2 
+WHERE 
+  (Q2.SR_TICKET_NUMBER = Q1.SS_TICKET_NUMBER) AND 
+  (Q2.SR_ITEM_SK = Q1.SS_ITEM_SK) AND 
+  (Q2.SR_RETURNED_DATE_SK = 2451680) AND 
+  (Q1.SS_STORE_SK = 2)
+
+Explain level:    Explain from section
+
+Access Plan:
+-----------
+	Total Cost: 		3135.86
+	Query Degree:		1
+
+
+                             Rows 
+                          Rows Actual
+                            RETURN
+                            (   1)
+                             Cost 
+                              I/O 
+                              |
+                            20.9455 
+                              14 
+                            ^NLJOIN
+                            (   2)
+                            3135.86 
+                              NA 
+                  /-----------+------------\
+              135.825                     0.154209 
+                122                       0.114754 
+              FETCH                        FETCH 
+              (   3)                       (   7)
+              195.423                      23.089 
+                NA                           NA 
+           /----+-----\                 /----+-----\
+       135.825        287514           1         2.8804e+06 
+         122            NA             1             NA 
+       RIDSCN   DP-TABLE: TPCDS     IXSCAN   DP-TABLE: TPCDS   
+       (   4)      STORE_RETURNS    (   8)       STORE_SALES
+       22.4372          Q2          15.7215          Q1
+         NA                           NA 
+         |                            |
+       135.825                    2.8804e+06 
+         122                          NA 
+       SORT                     INDEX: SYSIBM  
+       (   5)                 SQL240423181346790
+       22.3857                        Q1
+         NA 
+         |
+       135.825 
+         122 
+       IXSCAN
+       (   6)
+       18.5765 
+         NA 
+         |
+       287514 
+         NA 
+ DP-INDEX: TPCDS   
+   SR_RETURNEDDATE
+         Q2
+
+
+Operator Symbols :
+------------------
+
+   Symbol      Description
+   ---------   ------------------------------------------
+   >JOIN     : Left outer join
+    JOIN<    : Right outer join
+   >JOIN<    : Full outer join
+   xJOIN     : Left antijoin
+    JOINx    : Right antijoin
+   ^JOIN     : Left early out
+    JOIN^    : Right early out
+
+
+Extended Diagnostic Information:
+--------------------------------
+
+No extended Diagnostic Information for this statement.
+
+
+Plan Details:
+-------------
+
+
+	1) RETURN: (Return Result)
+		Cumulative Total Cost: 		3135.86
+		Cumulative First Row Cost: 	178.128
+		Estimated Bufferpool Buffers: 	600
+
+		Arguments:
+		---------
+		BLDLEVEL: (Build level)
+			DB2 v12.1.0.0 : z2212010100
+		ENVVAR  : (Environment Variable)
+			DB2_SELECTIVITY=MODEL_JOIN_CARD ON
+		EXECUTID: (Executable ID)
+			0100000000000000020000000000000000000000020020240430083243124341
+		HEAPUSE : (Maximum Statement Heap Usage)
+			144 Pages
+		PLANID  : (Access plan identifier)
+			6cce3a86525db586
+		SEMEVID : (Semantic environment identifier)
+			0000000000000001
+		STMTHEAP: (Statement heap size)
+			8192
+		STMTID  : (Normalized statement identifier)
+			9992d59179e5d534
+		TENANTID: (Compiled In Tenant ID)
+			0
+		TENANTNM: (Compiled In Tenant Name)
+			SYSTEM
+
+		Input Streams:
+		-------------
+			11) From Operator #2
+
+				Estimated number of rows: 	20.9455
+				Actual number of rows: 		14
+
+
+	2) NLJOIN: (Nested Loop Join)
+		Cumulative Total Cost: 		3135.86
+		Cumulative First Row Cost: 	178.128
+		Estimated Bufferpool Buffers: 	600
+
+		Arguments:
+		---------
+		EARLYOUT: (Early Out flag)
+			LEFT
+		FETCHMAX: (Override for FETCH MAXPAGES)
+			IGNORE
+		ISCANMAX: (Override for ISCAN MAXPAGES)
+			IGNORE
+
+		Predicates:
+		----------
+		2) Predicate used in Join, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			4.16667e-06
+
+			Predicate Text:
+			--------------
+			(Q2.SR_TICKET_NUMBER = Q1.SS_TICKET_NUMBER)
+
+
+		3) Predicate used in Join, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			5.55556e-05
+
+			Predicate Text:
+			--------------
+			(Q2.SR_ITEM_SK = Q1.SS_ITEM_SK)
+
+
+
+		Input Streams:
+		-------------
+			6) From Operator #3
+
+				Estimated number of rows: 	135.825
+				Actual number of rows: 		122
+
+			10) From Operator #7
+
+				Estimated number of rows: 	0.154209
+				Actual number of rows: 		0.114754
+
+
+		Output Streams:
+		--------------
+			11) To Operator #1
+
+				Estimated number of rows: 	20.9455
+				Actual number of rows: 		14
+
+
+	3) FETCH : (Fetch)
+		Cumulative Total Cost: 		195.423
+		Cumulative First Row Cost: 	29.6915
+		Estimated Bufferpool Buffers: 	212
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		GLOBLOCK: (Global Lock intent)
+			INTENT SHARE
+		JN INPUT: (Join input leg)
+			OUTER
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		MAX RIDS: (Maximum RIDs per list prefetch request)
+			512
+		PREFETCH: (Type of Prefetch)
+			LIST                
+		ROWLOCK : (Row Lock intent)
+			SHARE (CS/RS)
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		SPEED   : (Assumed speed of scan, in sharing structures)
+			SLOW
+		TABLOCK : (Table Lock intent)
+			INTENT SHARE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+		THROTTLE: (Scan may be throttled, for scan sharing)
+			FALSE
+		VISIBLE : (May be included in scan sharing structures)
+			FALSE
+		WRAPPING: (Scan may start anywhere and wrap)
+			FALSE
+
+		Predicates:
+		----------
+		4) Sargable Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			0.000472413
+
+			Predicate Text:
+			--------------
+			(Q2.SR_RETURNED_DATE_SK = 2451680)
+
+
+
+		Input Streams:
+		-------------
+			4) From Operator #4
+
+				Estimated number of rows: 	135.825
+				Actual number of rows: 		122
+
+			5) From Object TPCDS.STORE_RETURNS
+
+				Estimated number of rows: 	287514
+
+				Column Names:
+				------------
+				+Q2.SR_NET_LOSS+Q2.SR_RETURNED_DATE_SK
+				+Q2.SR_ITEM_SK+Q2.SR_TICKET_NUMBER
+
+
+		Output Streams:
+		--------------
+			6) To Operator #2
+
+				Estimated number of rows: 	135.825
+				Actual number of rows: 		122
+
+
+	4) RIDSCN: (Row Identifier Scan)
+		Cumulative Total Cost: 		22.4372
+		Cumulative First Row Cost: 	22.3857
+		Estimated Bufferpool Buffers: 	2
+
+		Arguments:
+		---------
+		NUMROWS : (Estimated number of rows)
+			136
+
+		Input Streams:
+		-------------
+			3) From Operator #5
+
+				Estimated number of rows: 	135.825
+				Actual number of rows: 		122
+
+
+		Output Streams:
+		--------------
+			4) To Operator #3
+
+				Estimated number of rows: 	135.825
+				Actual number of rows: 		122
+
+
+	5) SORT  : (Sort)
+		Cumulative Total Cost: 		22.3857
+		Cumulative First Row Cost: 	22.3857
+		Estimated Bufferpool Buffers: 	2
+
+		Arguments:
+		---------
+		DUPLWARN: (Duplicates Warning flag)
+			TRUE
+		KEYS    : (Key cardinality)
+			136
+		NUMROWS : (Estimated number of rows)
+			136
+		ROWWIDTH: (Estimated width of rows)
+			20.000000
+		SORTKEY : (Sort Key column)
+			1: Q2.$RID$(A)
+		TEMPSIZE: (Temporary Table Page Size)
+			4096
+		UNIQUE  : (Uniqueness required flag)
+			TRUE
+
+		Input Streams:
+		-------------
+			2) From Operator #6
+
+				Estimated number of rows: 	135.825
+				Actual number of rows: 		122
+
+
+		Output Streams:
+		--------------
+			3) To Operator #4
+
+				Estimated number of rows: 	135.825
+				Actual number of rows: 		122
+
+
+	6) IXSCAN: (Index Scan)
+		Cumulative Total Cost: 		18.5765
+		Cumulative First Row Cost: 	8.13714
+		Estimated Bufferpool Buffers: 	2
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		DPESTFLG: (Number of data partitions accessed are Estimated)
+			FALSE
+		DPLSTPRT: (List of data partitions accessed)
+			3
+		DPNUMPRT: (Number of data partitions accessed)
+			1
+		GLOBLOCK: (Global Lock intent)
+			INTENT NONE
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		MAXPAGES: (Maximum pages for prefetch)
+			1
+		PREFETCH: (Type of Prefetch)
+			READAHEAD           
+		ROWLOCK : (Row Lock intent)
+			NONE
+		SCANDIR : (Scan Direction)
+			FORWARD
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		TABLOCK : (Table Lock intent)
+			INTENT NONE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+		UR_EXTRA: (UR plus extra table lock and may upgrade to CS)
+			TRUE
+
+		Predicates:
+		----------
+		4) Start Key Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			0.000472413
+
+			Predicate Text:
+			--------------
+			(Q2.SR_RETURNED_DATE_SK = 2451680)
+
+
+		4) Stop Key Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			0.000472413
+
+			Predicate Text:
+			--------------
+			(Q2.SR_RETURNED_DATE_SK = 2451680)
+
+
+
+		DP Elim Predicates:
+		------------------
+		Range 1)
+			Start Predicate: (Q2.SR_RETURNED_DATE_SK = 2451680)
+			Stop  Predicate: (Q2.SR_RETURNED_DATE_SK = 2451680)
+
+		Input Streams:
+		-------------
+			1) From Object TPCDS.SR_RETURNEDDATE
+
+				Estimated number of rows: 	287514
+
+				Column Names:
+				------------
+				+Q2.$RID$+Q2.SR_RETURNED_DATE_SK
+
+
+		Output Streams:
+		--------------
+			2) To Operator #5
+
+				Estimated number of rows: 	135.825
+				Actual number of rows: 		122
+
+
+	7) FETCH : (Fetch)
+		Cumulative Total Cost: 		23.089
+		Cumulative First Row Cost: 	23.0134
+		Estimated Bufferpool Buffers: 	107021
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		GLOBLOCK: (Global Lock intent)
+			INTENT SHARE
+		JN INPUT: (Join input leg)
+			INNER
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		MAXPAGES: (Maximum pages for prefetch)
+			1
+		PREFETCH: (Type of Prefetch)
+			NONE                
+		ROWLOCK : (Row Lock intent)
+			SHARE (CS/RS)
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		SPEED   : (Assumed speed of scan, in sharing structures)
+			SLOW
+		TABLOCK : (Table Lock intent)
+			INTENT SHARE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+		THROTTLE: (Scan may be throttled, for scan sharing)
+			FALSE
+		VISIBLE : (May be included in scan sharing structures)
+			FALSE
+		WRAPPING: (Scan may start anywhere and wrap)
+			FALSE
+
+		Predicates:
+		----------
+		5) Sargable Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			0.154209
+
+			Predicate Text:
+			--------------
+			(Q1.SS_STORE_SK = 2)
+
+
+
+		Input Streams:
+		-------------
+			8) From Operator #8
+
+				Estimated number of rows: 	1
+				Actual number of rows: 		1
+
+			9) From Object TPCDS.STORE_SALES
+
+				Estimated number of rows: 	2.8804e+06
+
+				Column Names:
+				------------
+				+Q1.SS_WHOLESALE_COST+Q1.SS_STORE_SK
+
+
+		Output Streams:
+		--------------
+			10) To Operator #2
+
+				Estimated number of rows: 	0.154209
+				Actual number of rows: 		0.114754
+
+
+	8) IXSCAN: (Index Scan)
+		Cumulative Total Cost: 		15.7215
+		Cumulative First Row Cost: 	15.7075
+		Estimated Bufferpool Buffers: 	16961
+
+		Arguments:
+		---------
+		CUR_COMM: (Currently Committed)
+			TRUE
+		DPESTFLG: (Number of data partitions accessed are Estimated)
+			FALSE
+		DPLSTPRT: (List of data partitions accessed)
+			- (NULL).
+		DPNUMPRT: (Number of data partitions accessed)
+			8
+		GLOBLOCK: (Global Lock intent)
+			INTENT SHARE
+		LCKAVOID: (Lock Avoidance)
+			TRUE
+		MAXPAGES: (Maximum pages for prefetch)
+			1
+		PREFETCH: (Type of Prefetch)
+			READAHEAD           
+		ROWLOCK : (Row Lock intent)
+			SHARE (CS/RS)
+		SCANDIR : (Scan Direction)
+			FORWARD
+		SKIP_INS: (Skip Inserted Rows)
+			TRUE
+		TABLOCK : (Table Lock intent)
+			INTENT SHARE
+		TBISOLVL: (Table access Isolation Level)
+			CURSOR STABILITY
+
+		Predicates:
+		----------
+		2) Start Key Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			4.16667e-06
+
+			Predicate Text:
+			--------------
+			(Q2.SR_TICKET_NUMBER = Q1.SS_TICKET_NUMBER)
+
+
+		2) Stop Key Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			4.16667e-06
+
+			Predicate Text:
+			--------------
+			(Q2.SR_TICKET_NUMBER = Q1.SS_TICKET_NUMBER)
+
+
+		3) Start Key Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			5.55556e-05
+
+			Predicate Text:
+			--------------
+			(Q2.SR_ITEM_SK = Q1.SS_ITEM_SK)
+
+
+		3) Stop Key Predicate, 
+			Comparison Operator: 		Equal (=)
+			Subquery Input Required: 	No
+			Filter Factor: 			5.55556e-05
+
+			Predicate Text:
+			--------------
+			(Q2.SR_ITEM_SK = Q1.SS_ITEM_SK)
+
+
+
+		Input Streams:
+		-------------
+			7) From Object SYSIBM.SQL240423181346790
+
+				Estimated number of rows: 	2.8804e+06
+
+				Column Names:
+				------------
+				+Q1.SS_ITEM_SK(A)+Q1.SS_TICKET_NUMBER(A)
+				+Q1.$RID$
+
+
+		Output Streams:
+		--------------
+			8) To Operator #7
+
+				Estimated number of rows: 	1
+				Actual number of rows: 		1
+
+
+Objects Used in Access Plan:
+---------------------------
+
+	Schema:   TPCDS   
+	Name:     STORE_RETURNS
+	Type:     Data Partitioned Table
+			Last statistics update: 	2024-04-23-19.22.59.285001
+			Number of rows: 		287514
+			Number of buffer pool pages: 	7787
+			Distinct row values: 		No
+			Tablespace name: 		<VARIOUS>
+			Tablespace overhead: 		6.725000
+			Tablespace transfer rate: 	0.040000
+			Prefetch page count: 		32
+			Container extent page count: 	32
+			Table overflow record count: 	0
+			Table Active Blocks: 		-1
+			Average Row Compression Ratio: 	0
+			Percentage Rows Compressed: 	0
+			Average Compressed Row Size: 	0
+
+	Schema:   TPCDS   
+	Name:     STORE_SALES
+	Type:     Data Partitioned Table
+			Last statistics update: 	2024-04-23-19.23.28.431993
+			Number of rows: 		2880404
+			Number of buffer pool pages: 	90068
+			Distinct row values: 		No
+			Tablespace name: 		<VARIOUS>
+			Tablespace overhead: 		6.725000
+			Tablespace transfer rate: 	0.040000
+			Prefetch page count: 		32
+			Container extent page count: 	32
+			Table overflow record count: 	0
+			Table Active Blocks: 		-1
+			Average Row Compression Ratio: 	0
+			Percentage Rows Compressed: 	0
+			Average Compressed Row Size: 	0
+
+	Schema:   SYSIBM  
+	Name:     SQL240423181346790
+	Type:     Index
+			Last statistics update: 	2024-04-23-19.23.28.431993
+			Number of rows: 		2880404
+			Number of buffer pool pages: 	90068
+			Distinct row values: 		Yes
+			Tablespace name: 		TS_PD_DATA_001
+			Tablespace overhead: 		6.725000
+			Tablespace transfer rate: 	0.040000
+			Prefetch page count: 		32
+			Container extent page count: 	32
+			Index clustering statistic: 	0.001675
+			Index leaf pages: 		16845
+			Index tree levels: 		3
+			Index full key cardinality: 	2880404
+			Base Table Schema: 		TPCDS   
+			Base Table Name: 		STORE_SALES
+			Columns in index:
+				SS_ITEM_SK(A)
+				SS_TICKET_NUMBER(A)
+			Null keys: 			Yes
+
+	Schema:   TPCDS   
+	Name:     SR_RETURNEDDATE
+	Type:     Partitioned Index
+			Last statistics update: 	2024-04-23-19.22.59.285001
+			Number of rows: 		287514
+			Number of buffer pool pages: 	7787
+			Distinct row values: 		No
+			Tablespace name: 		<VARIOUS>
+			Tablespace overhead: 		6.725000
+			Tablespace transfer rate: 	0.040000
+			Prefetch page count: 		32
+			Container extent page count: 	32
+			Index clustering statistic: 	0.200132
+			Index leaf pages: 		73
+			Index tree levels: 		2
+			Index full key cardinality: 	2005
+			Base Table Schema: 		TPCDS   
+			Base Table Name: 		STORE_RETURNS
+			Columns in index:
+				SR_RETURNED_DATE_SK(A)
+			Null keys: 			Yes
+
+Runtime statistics for objects Used in Access Plan:
+-----------------------------------------------------
+
+	Schema: TPCDS   
+	Name: 	STORE_RETURNS
+	Type: 	Data Partitioned Table
+
+			Member 0
+			---------
+
+				DataPartId 	Metrics
+				---------- 	--------------------
+				3          	rows_reads:122
+				           	object_data_l_reads:120
+				           	object_data_p_reads:2
+				           	object_data_lbp_pages_found:118
+				           	object_data_gbp_indep_pages_found_in_lbp:118
+				           	object_data_caching_tier_gbp_indep_pages_found:118
+
+	Schema: TPCDS   
+	Name: 	STORE_SALES
+	Type: 	Data Partitioned Table
+
+			Member 0
+			---------
+
+				DataPartId 	Metrics
+				---------- 	--------------------
+				2          	rows_reads:62
+				           	object_data_l_reads:65
+				           	object_data_p_reads:63
+				           	object_data_lbp_pages_found:2
+				           	object_data_gbp_indep_pages_found_in_lbp:2
+				           	object_data_caching_tier_gbp_indep_pages_found:2
+				3          	rows_reads:54
+				           	object_data_l_reads:57
+				           	object_data_p_reads:54
+				           	object_data_lbp_pages_found:3
+				           	object_data_gbp_indep_pages_found_in_lbp:3
+				           	object_data_caching_tier_gbp_indep_pages_found:3
+				7          	rows_reads:6
+				           	object_data_l_reads:9
+				           	object_data_p_reads:7
+				           	object_data_lbp_pages_found:2
+				           	object_data_gbp_indep_pages_found_in_lbp:2
+				           	object_data_caching_tier_gbp_indep_pages_found:2
+
+	Schema: SYSIBM  
+	Name: 	SQL240423181346790
+	Type: 	Index
+
+			Member 0
+			---------
+
+				Metrics
+				--------------------
+				object_index_l_reads:367
+				object_index_p_reads:208
+				object_index_lbp_pages_found:159
+				object_index_gbp_indep_pages_found_in_lbp:159
+
+	Schema: TPCDS   
+	Name: 	SR_RETURNEDDATE
+	Type: 	Partitioned Index
+
+			Member 0
+			---------
+
+				DataPartId 	Metrics
+				---------- 	--------------------
+				3          	object_index_l_reads:3
+				           	object_index_p_reads:2
+				           	object_index_lbp_pages_found:1
+				           	object_index_gbp_indep_pages_found_in_lbp:1
+
